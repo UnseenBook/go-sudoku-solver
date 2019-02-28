@@ -1,5 +1,7 @@
 package board
 
+import "strconv"
+
 // Board holds all the items of the Sudoku puzzel
 type Board [9][9]Item
 
@@ -45,6 +47,29 @@ func (b *Board) CalculatePossibilities() {
 			}
 		}
 	}
+}
+
+func (b Board) String() string {
+	var print string
+	for rowNum, line := range b {
+		for columnNum, item := range line {
+			print += " "
+			if item.Value == 0 {
+				print += " "
+			} else {
+				print += strconv.Itoa(item.Value)
+			}
+			if columnNum == 2 || columnNum == 5 {
+				print += " |"
+			}
+		}
+		print += "\n"
+		if rowNum == 2 || rowNum == 5 {
+			print += " - - - | - - - | - - -\n"
+		}
+	}
+
+	return print
 }
 
 // BuildBoardFromInput creates a Board based on the input

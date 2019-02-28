@@ -19,17 +19,17 @@ func main() {
 	localBoard.CalculatePossibilities()
 
 	fmt.Println()
-	printBoard(localBoard)
+	fmt.Println(localBoard)
 
 	for localBoard.SetValuesBasedOnPossibilities() {
 		localBoard.CalculatePossibilities()
 		fmt.Println()
-		printBoard(localBoard)
+		fmt.Println(localBoard)
 	}
 
 	fmt.Println()
 	fmt.Println("Finished puzzel:")
-	printBoard(localBoard)
+	fmt.Println(localBoard)
 }
 
 func printBoardInput(board [9][9]int) {
@@ -41,27 +41,6 @@ func printBoardInput(board [9][9]int) {
 			} else {
 				fmt.Print(item)
 			}
-			if columnNum == 2 || columnNum == 5 {
-				fmt.Print(" |")
-			}
-		}
-		fmt.Println()
-		if rowNum == 2 || rowNum == 5 {
-			fmt.Println(" - - - | - - - | - - -")
-		}
-	}
-}
-
-func printBoard(board board.Board) {
-	for rowNum, row := range board {
-		for columnNum, item := range row {
-			fmt.Print(" ")
-			if item.Value == 0 {
-				fmt.Print(" ")
-			} else {
-				fmt.Print(item.Value)
-			}
-			// fmt.Println(item.Possibilities)
 			if columnNum == 2 || columnNum == 5 {
 				fmt.Print(" |")
 			}
