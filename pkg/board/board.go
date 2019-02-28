@@ -10,12 +10,39 @@ type boardItem struct {
 	Value         int
 }
 
-func buildBoardFromInput(boardInput [][]int) {
+func newFilledBoardItem(value int) boardItem {
+	return boardItem{possibilities: []int{value}, Value: value}
+}
+
+func newEmptyBoardItem() boardItem {
+	return boardItem{possibilities: []int{1, 2, 3, 4, 5, 6, 7, 8, 9}}
+}
+
+func buildBoardFromInput(boardInput [][]int) Board {
 	var localItems [9][9]boardItem
 	for lineNum, line := range boardInput {
-		for columnNum, item := range line {
-			possi := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
-			localItems[lineNum][columnNum] = boardItem{possi, item}
+		for collumnNum, item := range line {
+			if item == 0 {
+				localItems[lineNum][collumnNum] = newEmptyBoardItem()
+				continue
+			}
+			localItems[lineNum][collumnNum] = newFilledBoardItem(item)
 		}
 	}
+
+	return Board{items: localItems}
+}
+
+func (b *Board) setProperPossibilities() {
+	for lineNum, line := range b.items {
+		for collumnNum, item := range line {
+			item.possibilities = getPossibilities(*b, lineNum, collumnNum)
+		}
+	}
+}
+
+func getPossibilities(b Board, lineNum int, collumnNum int) []int {
+	possi := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+
+	return possi
 }
