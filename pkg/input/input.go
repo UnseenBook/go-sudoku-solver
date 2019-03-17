@@ -49,7 +49,7 @@ func mergeInputs(left []int, right []int) []int {
 func getNumbersFromLine(line string) []int {
 	var numbers []int
 	for _, value := range line {
-		if value == ' ' {
+		if value == ' ' || value == '.' {
 			numbers = append(numbers, 0)
 		}
 		if value >= '0' && value <= '9' {
