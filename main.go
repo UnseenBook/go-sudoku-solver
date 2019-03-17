@@ -16,13 +16,13 @@ func main() {
 
 	localBoard := board.BuildBoardFromInput(inputBoard)
 
-	localBoard.CalculatePossibilities()
+	localBoard.CalculateAndUpdatePossibilities()
 
 	fmt.Println()
 	fmt.Println(localBoard)
 
 	for localBoard.SetValuesBasedOnPossibilities() {
-		localBoard.CalculatePossibilities()
+		localBoard.CalculateAndUpdatePossibilities()
 		fmt.Println()
 		fmt.Println(localBoard)
 	}
