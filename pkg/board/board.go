@@ -1,6 +1,9 @@
 package board
 
-import "strconv"
+import (
+	"fmt"
+	"strconv"
+)
 
 // Board holds all the items of the Sudoku puzzel
 type Board [9][9]Item
@@ -17,9 +20,9 @@ type sudokuList []int
 func (b *Board) SetValuesBasedOnPossibilities() bool {
 	anyUpdated := false
 
-	for lineNum, line := range b {
+	for rowNum, line := range b {
 		for collumnNum := range line {
-			item := &b[lineNum][collumnNum]
+			item := &b[rowNum][collumnNum]
 			if item.Value == 0 && len(item.Possibilities) == 1 {
 				anyUpdated = true
 				item.Value = item.Possibilities[0]
@@ -32,19 +35,18 @@ func (b *Board) SetValuesBasedOnPossibilities() bool {
 
 // CalculateAndUpdatePossibilities calculates the possibilieties of the empty fields
 func (b *Board) CalculateAndUpdatePossibilities() {
-	for lineNum, line := range b {
+	for rowNum, line := range b {
 		for collumnNum := range line {
-			item := &b[lineNum][collumnNum]
+			item := &b[rowNum][collumnNum]
 			if item.Value == 0 {
-				item.Possibilities = b.getPossibilitiesForSquare(collumnNum, lineNum)
+				item.Possibilities = b.getPossibilitiesForSquare(collumnNum, rowNum)
 			}
 		}
 	}
 }
 
 func (b *Board) getPossibilitiesForSquare(collumnNum int, rowNum int) []int {
-	squarePossibilieties := (&b[rowNum][collumnNum]).Possibilities
-	localPossibilities := subtractSudokuLists(squarePossibilieties, b.getBigSqaureValuesFromSquare(rowNum, collumnNum))
+	localPossibilities := subtractSudokuLists(completeSudokuList(), b.getBigSqaureValuesFromSquare(rowNum, collumnNum))
 	localPossibilities = subtractSudokuLists(localPossibilities, b.getRowValuesFromSquare(rowNum, collumnNum))
 	localPossibilities = subtractSudokuLists(localPossibilities, b.getCollumnValuesFromSquare(rowNum, collumnNum))
 
@@ -157,13 +159,13 @@ func (b Board) String() string {
 // BuildBoardFromInput creates a Board based on the input
 func BuildBoardFromInput(boardInput [9][9]int) Board {
 	var localItems [9][9]Item
-	for lineNum, line := range boardInput {
+	for rowNum, line := range boardInput {
 		for collumnNum, item := range line {
 			if item == 0 {
-				localItems[lineNum][collumnNum] = newEmptyBoardItem()
+				localItems[rowNum][collumnNum] = newEmptyBoardItem()
 				continue
 			}
-			localItems[lineNum][collumnNum] = newFilledBoardItem(item)
+			localItems[rowNum][collumnNum] = newFilledBoardItem(item)
 		}
 	}
 
@@ -183,9 +185,23 @@ func (b *Board) IsSolved() bool {
 	return true
 }
 
-func (b *Board) hasError() bool {
+// ValidateBoard checks if the board has an error
+func (b *Board) ValidateBoard() error {
+	for rowNum, line := range b {
+		for collumnNum := range line {
+			return b.validateSquare(collumnNum, rowNum)
+		}
+	}
 
-	return false
+	return nil
+}
+
+func (b *Board) validateSquare(collumnNum int, rowNum int) error {
+	if len(b.getPossibilitiesForSquare(collumnNum, rowNum)) == 0 {
+		return fmt.Errorf("square has no possibilities. Coll: %v, Row: %v", collumnNum, rowNum)
+	}
+
+	return nil
 }
 
 func completeSudokuList() sudokuList {
@@ -198,4 +214,17 @@ func newFilledBoardItem(value int) Item {
 
 func newEmptyBoardItem() Item {
 	return Item{Possibilities: completeSudokuList()}
+}
+
+func getSudokuListIntersect(left sudokuList, right sudokuList) sudokuList {
+	var intersect sudokuList
+	for _, leftValue := range left {
+		for _, rightValue := range right {
+			if leftValue == rightValue {
+				intersect = append(intersect, leftValue)
+			}
+		}
+	}
+
+	return intersect
 }

@@ -21,7 +21,21 @@ func main() {
 	fmt.Println()
 	fmt.Println(localBoard)
 
+	validationError := localBoard.ValidateBoard()
+
+	if validationError != nil {
+		fmt.Println(validationError)
+		return
+	}
+
 	for localBoard.SetValuesBasedOnPossibilities() {
+		validationError = localBoard.ValidateBoard()
+
+		if validationError != nil {
+			fmt.Println(validationError)
+			return
+		}
+
 		localBoard.CalculateAndUpdatePossibilities()
 		fmt.Println()
 		fmt.Println(localBoard)
